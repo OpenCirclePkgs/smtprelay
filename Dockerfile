@@ -1,6 +1,7 @@
 FROM golang:1.16-alpine AS builder
 
 RUN mkdir /app
+RUN ls
 COPY ./external_repo/ /app
 
 WORKDIR /app
