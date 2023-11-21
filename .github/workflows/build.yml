@@ -9,20 +9,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout original repository
+    steps:        
+    - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        repository: decke/smtprelay
-        path: external_repo
-        
-    - name: Checkout current repository
-      uses: actions/checkout@v4
-      with:
-        path: local_repo
-
-    - name: debug
-      run: ls
 
     - name: Setup QEMU for ARM64
       run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -66,11 +55,7 @@ jobs:
     - name: Download files from latest release
       run: |
         latest_release=$(curl -s https://api.github.com/repos/decke/smtprelay/releases/latest | jq -r '.tag_name')
-        echo "Latest release: $latest_release"       
-
-        #debug
-        echo "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz"
-        echo "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz"
+        echo "Latest release: $latest_release"
         
         # Download files from the latest release using the GitHub REST API
         curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -78,8 +63,6 @@ jobs:
         -LO "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz" \
         -LO "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz" \
         -o "smtprelay-$latest_release-linux-amd64.tar.gz"
-
-        ls
 
         tar -xzf smtprelay-$latest_release-linux-arm64.tar.gz -C arm64
         tar -xzf smtprelay-$latest_release-linux-amd64.tar.gz -C amd64
