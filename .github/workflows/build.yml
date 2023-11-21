@@ -61,7 +61,7 @@ jobs:
           ls local_repo
           
           docker buildx create --use
-          docker buildx build \
+          docker buildx build --no-cache \
             --platform linux/amd64,linux/arm64 \
             -t ghcr.io/$lowercase_repo_name:$latest_release \
             ./local_repo/
