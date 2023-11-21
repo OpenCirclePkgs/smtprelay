@@ -30,7 +30,7 @@ jobs:
         package_name="smtprelay"
 
         current_release=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/orgs/$repo_owner/packages/$package_type/$package_name/versions" | jq -r '.[0].metadata.container.tags.[0]')
+          "https://api.github.com/orgs/$repo_owner/packages/$package_type/$package_name/versions" | jq -r '.[0].metadata.container.tags[0]')
 
         current_release=echo "$current_release" | sed 's/-arm64//'
 
