@@ -47,7 +47,7 @@ jobs:
         current_release=${current_release:-""}
 
         echo "Current release in the container repository: $current_release"
-        
+
     - name: Check for new releases
       run: |
         latest_release=$(curl -s https://api.github.com/repos/decke/smtprelay/releases/latest | jq -r '.tag_name')
@@ -55,17 +55,45 @@ jobs:
 
         if [ "$latest_release" != "$current_release" ]; then
           echo "New release found. Building and pushing Docker container..."
-
-          lowercase_repo_name=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          
-          docker buildx create --use
-          docker buildx build --no-cache \
-            --platform linux/amd64,linux/arm64 \
-            -t ghcr.io/$lowercase_repo_name:$latest_release \
-            -f ./local_repo/Dockerfile \
-            ./external_repo/
-
-          docker push ghcr.io/$lowercase_repo_name:$latest_release
         else
           echo "No new releases found. Exiting."
+          exit 1
         fi
+
+    - name: Download files from latest release
+      run: |
+        latest_release=$(curl -s https://api.github.com/repos/decke/smtprelay/releases/latest | jq -r '.tag_name')
+        echo "Latest release: $latest_release"
+        
+        # Create a directory to store downloaded files
+        mkdir -p downloaded_files
+        
+        # Download files from the latest release using the GitHub REST API
+        curl -sLJO -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+        "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz" \
+        "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz"
+
+        tar -xzf smtprelay-$latest_release-linux-arm64.tar.gz -C arm64
+        tar -xzf smtprelay-$latest_release-linux-amd64.tar.gz -C amd64
+        
+      working-directory: downloaded_files
+
+    - name: Build and Push Docker Container (AMD64)
+      uses: docker/build-push-action@v2
+      with:
+        platforms: linux/amd64
+        push: true
+        file: Dockerfile-amd64
+        context: ./downloaded_files/
+        tags: |
+          latest-amd64, $latest_release-amd64
+
+    - name: Build and Push Docker Container (ARM64)
+      uses: docker/build-push-action@v2
+      with:
+        platforms: linux/arm64
+        push: true
+        file: Dockerfile-arm64
+        context: ./downloaded_files/
+        tags: |
+          latest-arm64, $latest_release-arm64
