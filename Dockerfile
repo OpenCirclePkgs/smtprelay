@@ -3,6 +3,10 @@ FROM golang:1.16-alpine AS builder
 WORKDIR /app
 COPY . .
 
+# Debug
+RUN ls -la
+RUN go version && go env
+
 RUN go build -o smtprelay .
 
 
