@@ -1,8 +1,9 @@
 FROM golang:1.16-alpine AS builder
 
-WORKDIR /app
-COPY ./external_repo/ .
+RUN mkdir /app
+COPY ./external_repo/ /app
 
+WORKDIR /app
 RUN go build -o smtprelay .
 
 
