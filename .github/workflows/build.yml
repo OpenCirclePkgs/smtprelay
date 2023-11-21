@@ -1,0 +1,41 @@
+name: Build and Push Docker Container
+
+on:
+  schedule:
+    - cron: '0 20 * * *'  # Run every day
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup QEMU for ARM64
+      run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Check for new releases
+      run: |
+        latest_release=$(curl -s https://api.github.com/repos/decke/smtprelay/releases/latest | jq -r .tag_name)
+        current_release=$(git describe --tags --abbrev=0)
+
+        if [ "$latest_release" != "$current_release" ]; then
+          echo "New release found. Building and pushing Docker container..."
+          
+          docker buildx create --use
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ghcr.io/${{ github.repository }}:$latest_release \
+            .
+
+          docker push ghcr.io/${{ github.repository }}:$latest_release
+        else
+          echo "No new releases found. Exiting."
+        fi
