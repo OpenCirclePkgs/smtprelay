@@ -14,6 +14,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: decke/smtprelay
+        path: external_repo
         
     - name: Checkout current repository
       uses: actions/checkout@v4
