@@ -57,12 +57,14 @@ jobs:
           echo "New release found. Building and pushing Docker container..."
 
           lowercase_repo_name=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+
+          ls local_repo
           
           docker buildx create --use
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t ghcr.io/$lowercase_repo_name:$latest_release \
-            ./local_repo/Dockerfile
+            local_repo/Dockerfile
 
           docker push ghcr.io/$lowercase_repo_name:$latest_release
         else
