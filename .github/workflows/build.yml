@@ -62,7 +62,7 @@ jobs:
           docker buildx build --no-cache \
             --platform linux/amd64,linux/arm64 \
             -t ghcr.io/$lowercase_repo_name:$latest_release \
-            -f ./local_repo \
+            -f ./local_repo/Dockerfile \
             ./external_repo/
 
           docker push ghcr.io/$lowercase_repo_name:$latest_release
