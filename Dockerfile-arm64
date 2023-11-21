@@ -1,0 +1,12 @@
+FROM scratch
+
+WORKDIR /app
+COPY arm64/smtprelay /app/
+COPY arm64/smtprelay.ini /app/
+
+EXPOSE 25
+EXPOSE 465
+EXPOSE 587
+
+# Command to run the application
+CMD ["./smtprelay", "--config", "smtprelay.ini"]
