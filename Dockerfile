@@ -3,7 +3,8 @@ FROM golang:1.16-alpine AS builder
 WORKDIR /app
 COPY . .
 
-RUN go build -o smtprelay .
+RUN go build -v .
+RUN go test -v .
 
 
 FROM alpine:latest
