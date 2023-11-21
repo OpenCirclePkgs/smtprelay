@@ -60,8 +60,8 @@ jobs:
           exit 1
         fi
 
-    - name: Create downloaded_files
-      run: mkdir downloaded_files
+    - name: Create Folders
+      run: mkdir -p downloaded_files/arm64 & mkdir downloaded_files/amd64
 
     - name: Download files from latest release
       run: |
