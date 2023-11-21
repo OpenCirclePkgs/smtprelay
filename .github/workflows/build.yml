@@ -17,6 +17,7 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Get current release from container repository
+      id: current
       run: |
         repo_owner="OpenCirclePkgs"
         repo_name="smtprelay"
@@ -30,13 +31,14 @@ jobs:
         current_release=${current_release:-""}
 
         echo "Current release in the container repository: $current_release"
+        echo ""::set-output name=current_release::$current_release""
 
     - name: Check for new releases
       run: |
         latest_release=$(curl -s https://api.github.com/repos/decke/smtprelay/releases/latest | jq -r '.tag_name')
         echo "latest release: $latest_release"
 
-        if [ "$latest_release" != "$current_release" ]; then
+        if [ "$latest_release" != "${{ steps.current.outputs.current_release }}" ]; then
           echo "New release found. Building and pushing Docker container..."
         else
           echo "No new releases found. Exiting."
