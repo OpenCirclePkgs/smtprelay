@@ -83,8 +83,11 @@ jobs:
 
         tar -xzf smtprelay-$latest_release-linux-arm64.tar.gz -C arm64
         tar -xzf smtprelay-$latest_release-linux-amd64.tar.gz -C amd64
+
+        echo "::set-output name=latest_release::$latest_release"
         
       working-directory: downloaded_files
+      id: release
 
     - name: Build and Push Docker Container (AMD64)
       uses: docker/build-push-action@v2
@@ -94,7 +97,7 @@ jobs:
         file: Dockerfile-amd64
         context: ./downloaded_files/
         tags: |
-          latest-amd64, ${{ latest_release }}-amd64
+          latest-amd64, ${{ steps.release.outputs.latest_release }}-amd64
 
     - name: Build and Push Docker Container (ARM64)
       uses: docker/build-push-action@v2
@@ -104,4 +107,4 @@ jobs:
         file: Dockerfile-arm64
         context: ./downloaded_files/
         tags: |
-          latest-arm64, ${{ latest_release }}-arm64
+          latest-arm64, ${{ steps.release.outputs.latest_release }}-arm64
