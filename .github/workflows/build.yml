@@ -58,7 +58,9 @@ jobs:
 
           lowercase_repo_name=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
 
+          ls
           ls local_repo
+          ls external_repo
           
           docker buildx create --use
           docker buildx build --no-cache \
