@@ -60,13 +60,13 @@ jobs:
           exit 1
         fi
 
+    - name: Create downloaded_files
+      run: mkdir downloaded_files
+
     - name: Download files from latest release
       run: |
         latest_release=$(curl -s https://api.github.com/repos/decke/smtprelay/releases/latest | jq -r '.tag_name')
-        echo "Latest release: $latest_release"
-        
-        # Create a directory to store downloaded files
-        mkdir downloaded_files
+        echo "Latest release: $latest_release"       
 
         #debug
         echo "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz"
