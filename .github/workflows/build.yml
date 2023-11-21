@@ -73,9 +73,11 @@ jobs:
         echo "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz"
         
         # Download files from the latest release using the GitHub REST API
-        curl -LO -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-        "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz" \
-        "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz"
+        curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+        -o "smtprelay-$latest_release-linux-arm64.tar.gz" \
+        -LO "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz" \
+        -LO "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz" \
+        -o "smtprelay-$latest_release-linux-amd64.tar.gz" \
 
         tar -xzf smtprelay-$latest_release-linux-arm64.tar.gz -C arm64
         tar -xzf smtprelay-$latest_release-linux-amd64.tar.gz -C amd64
