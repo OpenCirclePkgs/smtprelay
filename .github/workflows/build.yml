@@ -77,7 +77,9 @@ jobs:
         -o "smtprelay-$latest_release-linux-arm64.tar.gz" \
         -LO "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-arm64.tar.gz" \
         -LO "https://github.com/decke/smtprelay/releases/download/$latest_release/smtprelay-$latest_release-linux-amd64.tar.gz" \
-        -o "smtprelay-$latest_release-linux-amd64.tar.gz" \
+        -o "smtprelay-$latest_release-linux-amd64.tar.gz"
+
+        ls
 
         tar -xzf smtprelay-$latest_release-linux-arm64.tar.gz -C arm64
         tar -xzf smtprelay-$latest_release-linux-amd64.tar.gz -C amd64
